@@ -112,19 +112,22 @@ class App
      */
     public static function path($type, $plugin = null)
     {
-        if ($type === 'Plugin') {
-            return (array)Configure::read('App.paths.plugins');
+        switch (strtolower(trim($type))) {
+            case 'plugin':
+                return (array)Configure::read('App.paths.plugins');
+            case 'locale':
+                if (empty($plugin)) {
+                    return (array)Configure::read('App.paths.locales');
+                }
+                break;
+            case 'template':
+                if (empty($plugin)) {
+                    return (array)Configure::read('App.paths.templates');
+                }
+                break;
+            default:
+                return (!empty($plugin)) ? [Plugin::classPath($plugin) . $type . DS] : [APP . $type . DS] ;
         }
-        if (empty($plugin) && $type === 'Locale') {
-            return (array)Configure::read('App.paths.locales');
-        }
-        if (empty($plugin) && $type === 'Template') {
-            return (array)Configure::read('App.paths.templates');
-        }
-        if (!empty($plugin)) {
-            return [Plugin::classPath($plugin) . $type . DS];
-        }
-        return [APP . $type . DS];
     }
 
     /**
